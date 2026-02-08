@@ -1,0 +1,53 @@
+{
+    "manifest_version": 3,
+    "name": "Navigator for Gemini",
+    "version": "1.0.0",
+    "description": "Gemini 对话导航工具，自动生成对话侧边目录，支持一键快速跳转至任意问答",
+    "permissions": [
+        "storage"
+    ],
+    "host_permissions": [
+        "https://gemini.google.com/*",
+        "http://101.201.74.180:3000/*"
+    ],
+    "background": {
+        "service_worker": "background.js",
+        "type": "module"
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "https://gemini.google.com/*"
+            ],
+            "js": [
+                "content.js"
+            ],
+            "css": [
+                "styles.css"
+            ],
+            "run_at": "document_idle"
+        }
+    ],
+    "action": {
+        "default_title": "Navigator for Gemini - 对话目录"
+    },
+    "web_accessible_resources": [
+        {
+            "resources": [
+                "icons/*.png",
+                "icons/*.svg"
+            ],
+            "matches": [
+                "https://gemini.google.com/*"
+            ]
+        }
+    ],
+    "icons": {
+        "16": "icons/icon16.png",
+        "19": "icons/icon19.png",
+        "32": "icons/icon32.png",
+        "38": "icons/icon38.png",
+        "48": "icons/icon48.png",
+        "128": "icons/icon128.png"
+    }
+}

@@ -1,0 +1,449 @@
+/**
+ * Navigator for Gemini 样式表
+ * 目录面板 UI 样式
+ * 使用 Gemini 原生 --gem-sys-color-- CSS 变量自动适配 light/dark 模式
+ */
+
+/* ============================================================
+   CSS 变量（布局/动画变量）
+   ============================================================ */
+:root {
+    --gn-panel-width: 280px;
+    --gn-header-height: 48px;
+    --gn-transition: 0.2s ease;
+}
+
+/* ============================================================
+   面板容器
+   ============================================================ */
+#gemininav-panel {
+    position: relative;
+    z-index: 10;
+    width: var(--gn-panel-width);
+    height: 100vh;
+    background: var(--gem-sys-color--surface-container, #f0f4f9);
+    border-left: none;
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    font-family: "Google Sans", Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    color: var(--gem-sys-color--on-surface, #1f1f1f);
+    transition: width var(--gn-transition);
+    overflow: hidden;
+    box-sizing: border-box;
+    /* 目录项交互色（匹配 Gemini 左侧边栏） */
+    --gn-item-hover: color-mix(in srgb, var(--gem-sys-color--on-surface-variant, #444746) 8%, transparent);
+    --gn-item-active: var(--gem-sys-color--primary-container, #d3e3fd);
+}
+
+#gemininav-panel.gn-collapsed {
+    width: 0;
+    border-left: none;
+    pointer-events: none;
+}
+
+/* ============================================================
+   头部
+   ============================================================ */
+.gn-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px 8px 16px;
+    background: var(--gem-sys-color--surface-container, #f0f4f9);
+    flex-shrink: 0;
+}
+
+.gn-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+    font-size: 0.95rem;
+    color: var(--gem-sys-color--on-surface-variant, #444746);
+    font-family: "Google Sans", Helvetica, Arial, sans-serif;
+}
+
+.gn-icon {
+    width: 20px;
+    height: 20px;
+    color: var(--gem-sys-color--on-surface-variant, #444746);
+}
+
+.gn-header-actions {
+    display: flex;
+    gap: 4px;
+}
+
+.gn-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border: none;
+    background: transparent;
+    border-radius: 50%;
+    cursor: pointer;
+    color: var(--gem-sys-color--on-surface-variant, #444746);
+    transition: background var(--gn-transition), color var(--gn-transition);
+}
+
+.gn-btn:hover {
+    background: var(--gem-sys-color--surface-container-highest, #dde3e0);
+    color: var(--gem-sys-color--on-surface, #1f1f1f);
+}
+
+.gn-btn-collapse {
+    width: 30px;
+    height: 30px;
+    -webkit-mask-image: var(--gn-icon-hide);
+    -webkit-mask-size: 18px;
+    -webkit-mask-position: center;
+    -webkit-mask-repeat: no-repeat;
+    mask-image: var(--gn-icon-hide);
+    mask-size: 18px;
+    mask-position: center;
+    mask-repeat: no-repeat;
+    background: var(--gem-sys-color--on-surface-variant, #444746);
+}
+
+.gn-btn-collapse:hover {
+    background: var(--gem-sys-color--on-surface, #1f1f1f);
+}
+
+/* ============================================================
+   搜索框
+   ============================================================ */
+.gn-search {
+    padding: 4px 15px 4px 15px;
+    flex-shrink: 0;
+}
+
+.gn-search-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.gn-search-input {
+    width: 100%;
+    padding: 5px 28px 5px 10px;
+    border: 1px solid var(--gem-sys-color--outline-variant, #c4c7c5);
+    border-radius: 12px;
+    background: var(--gem-sys-color--surface, #ffffff);
+    color: var(--gem-sys-color--on-surface, #1f1f1f);
+    font-size: 13px;
+    font-family: "Google Sans", "Helvetica Neue", Arial, sans-serif;
+    outline: none;
+    transition: border-color var(--gn-transition), box-shadow var(--gn-transition);
+}
+
+.gn-search-input::placeholder {
+    color: var(--gem-sys-color--on-surface-variant, #444746);
+}
+
+.gn-search-input:focus,
+.gn-search-input:not(:placeholder-shown) {
+    border-color: var(--gem-sys-color--primary, #0b57d0);
+    box-shadow: none;
+}
+
+.gn-search-clear {
+    position: absolute;
+    right: 4px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    color: var(--gem-sys-color--on-surface-variant, #444746);
+    border-radius: 50%;
+    padding: 0;
+}
+
+.gn-search-clear:hover {
+    color: var(--gem-sys-color--on-surface, #1f1f1f);
+}
+
+.gn-search-input:not(:placeholder-shown) ~ .gn-search-clear {
+    display: flex;
+}
+
+/* ============================================================
+   目录列表
+   ============================================================ */
+.gn-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 4px 8px 8px 4px;
+    min-height: 100px;
+}
+
+.gn-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.gn-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.gn-list::-webkit-scrollbar-thumb {
+    background: var(--gem-sys-color--outline-variant, #c4c7c5);
+    border-radius: 3px;
+}
+
+.gn-list::-webkit-scrollbar-thumb:hover {
+    background: var(--gem-sys-color--on-surface-variant, #444746);
+}
+
+.gn-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 8px 6px 4px;
+    border-radius: 12px;
+    cursor: pointer;
+    margin-bottom: 4px;
+    background: transparent;
+}
+
+.gn-item:hover {
+    background: var(--gn-item-hover);
+}
+
+.gn-item-active {
+    background: var(--gn-item-active);
+    font-weight: 500;
+}
+
+.gn-item-active .gn-item-summary {
+    color: var(--gem-sys-color--on-primary-container, #041e49);
+    font-weight: 500;
+}
+
+.gn-item-active:hover {
+    background: var(--gn-item-active);
+}
+
+.gn-item-summary {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 14px;
+    line-height: 20px;
+    font-family: "Google Sans", Helvetica, Arial, sans-serif;
+}
+
+/* 悬停时显示重命名按钮 */
+.gn-item-rename-btn {
+    display: none;
+    -webkit-mask-image: var(--gn-icon-rename);
+    -webkit-mask-size: 14px;
+    -webkit-mask-position: center;
+    -webkit-mask-repeat: no-repeat;
+    mask-image: var(--gn-icon-rename);
+    mask-size: 15px;
+    mask-position: center;
+    mask-repeat: no-repeat;
+    background: var(--gem-sys-color--on-surface-variant, #444746);
+    border: none;
+    padding: 0;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    flex-shrink: 0;
+    border-radius: 50%;
+}
+
+.gn-item:hover .gn-item-rename-btn {
+    display: block;
+}
+
+.gn-item-rename-btn:hover {
+    background: var(--gem-sys-color--on-surface, #1f1f1f);
+}
+
+/* AI 摘要按钮 */
+.gn-item-ai-btn {
+    display: none;
+    -webkit-mask-image: var(--gn-icon-ai);
+    -webkit-mask-size: 14px;
+    -webkit-mask-position: center;
+    -webkit-mask-repeat: no-repeat;
+    mask-image: var(--gn-icon-ai);
+    mask-size: 15px;
+    mask-position: center;
+    mask-repeat: no-repeat;
+    background: var(--gem-sys-color--on-surface-variant, #444746);
+    border: none;
+    padding: 0;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    flex-shrink: 0;
+    border-radius: 50%;
+}
+
+.gn-item:hover .gn-item-ai-btn {
+    display: block;
+}
+
+.gn-item-ai-btn:hover {
+    background: var(--gem-sys-color--on-surface, #1f1f1f);
+}
+
+/* AI 摘要中状态 */
+.gn-item-summarizing {
+    pointer-events: none;
+}
+
+.gn-item-summarizing .gn-item-summary {
+    color: var(--gem-sys-color--on-surface-variant, #444746);
+    font-style: italic;
+}
+
+.gn-item-ai-loading {
+    width: 16px;
+    height: 16px;
+    border: 2px solid var(--gem-sys-color--outline-variant, #c4c7c5);
+    border-top-color: var(--gem-sys-color--on-surface, #1f1f1f);
+    border-radius: 50%;
+    animation: gn-spin 0.6s linear infinite;
+    flex-shrink: 0;
+}
+
+@keyframes gn-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* 编辑模式 */
+.gn-item-editing {
+    padding: 6px 12px;
+    gap: 6px;
+    align-items: center;
+    min-height: 42px;
+    box-sizing: border-box;
+}
+
+.gn-rename-input {
+    flex: 1;
+    min-width: 0;
+    padding: 4px 8px;
+    height: 28px;
+    font-size: 13px;
+    font-family: "Google Sans", "Helvetica Neue", Arial, sans-serif;
+    border: 1px solid var(--gem-sys-color--outline-variant, #c4c7c5);
+    border-radius: 8px;
+    background: var(--gem-sys-color--surface, #ffffff);
+    color: var(--gem-sys-color--on-surface, #1f1f1f);
+    outline: none;
+    box-sizing: border-box;
+    line-height: normal;
+}
+
+.gn-rename-input:focus {
+    border-color: var(--gem-sys-color--primary, #0b57d0);
+    box-shadow: 0 0 0 2px var(--gem-sys-color--primary-container, #d3e3fd);
+}
+
+/* 跳转目标指示器（小圆点） */
+.gn-item-indicator {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin: 0 0 0 4px;
+    background: transparent;
+}
+
+.gn-indicator-active {
+    background: var(--gem-sys-color--primary, #0b57d0);
+}
+
+/* Tooltip 样式 */
+.gn-tooltip {
+    position: absolute;
+    z-index: 10000;
+    background: var(--gem-sys-color--surface-container-low, #f7f8f8);
+    border: 1px solid var(--gem-sys-color--outline-variant, #c4c7c5);
+    border-radius: 12px;
+    padding: 10px 12px;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--gem-sys-color--on-surface, #1f1f1f);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    white-space: pre-wrap;
+    word-break: break-word;
+    animation: gn-tooltip-fadeIn 0.15s ease;
+}
+
+@keyframes gn-tooltip-fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.gn-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 16px;
+    color: var(--gem-sys-color--on-surface-variant, #444746);
+    font-size: 13px;
+}
+
+/* ============================================================
+   展开按钮（Material Design 圆形图标按钮风格）
+   ============================================================ */
+.gn-expand-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+    width: 40px;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--gem-sys-color--on-surface-variant, #444746);
+    cursor: pointer;
+    outline: none;
+    transition: background-color 0.15s ease, color 0.15s ease;
+    box-sizing: border-box;
+}
+
+.gn-expand-btn:hover {
+    background-color: var(--gem-sys-color--surface-container-highest, #dde3e0);
+}
+
+.gn-expand-btn:focus {
+    outline: none;
+}
+
+.gn-expand-btn svg {
+    width: 30px;
+    height: 30px;
+}
+
+/* ============================================================
+   响应式
+   ============================================================ */
+@media (max-width: 768px) {
+    #gemininav-panel {
+        width: 260px;
+    }
+}
