@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
     "name": "Navigator for Gemini",
-    "version": "2.0.0",
+    "version": "2.0.1",
     "description": "Gemini 对话导航工具，自动生成对话侧边目录，一键快速跳转至任意问答，AI智能提炼对话摘要",
     "permissions": [
         "storage"
