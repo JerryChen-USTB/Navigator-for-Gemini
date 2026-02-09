@@ -8,7 +8,7 @@
     ],
     "host_permissions": [
         "https://gemini.google.com/*",
-        "http://101.201.74.180:3000/*"
+        "https://jerrystudio.top/*"
     ],
     "background": {
         "service_worker": "background.js",
