@@ -62,6 +62,17 @@
     // ============================================================
 
     /**
+     * 检查扩展上下文是否仍然有效（扩展更新/重载后旧 content script 上下文会失效）
+     */
+    function isContextValid() {
+        try {
+            return !!chrome.runtime?.id;
+        } catch {
+            return false;
+        }
+    }
+
+    /**
      * 防抖函数
      */
     function debounce(fn, delay) {
@@ -459,8 +470,8 @@
                     if (this.collapseBtn.parentElement === rightSection) return;
                     rightSection.insertBefore(this.collapseBtn, rightSection.firstChild);
                 } else if (!this.collapseBtn.parentElement) {
-                    console.warn('Navigator for Gemini: 未找到顶栏按钮容器，使用降级方案');
-                    document.body.appendChild(this.collapseBtn);
+                    // 顶栏尚未渲染，跳过本次插入；
+                    // MutationObserver 触发 refresh() 时会自动重试
                 }
             }
         }
@@ -1158,6 +1169,10 @@
 
             this.observer = new MutationObserver(
                 debounce(() => {
+                    if (!isContextValid()) {
+                        this.destroy();
+                        return;
+                    }
                     this.tocPanel.refresh();
                 }, CONFIG.DEBOUNCE_DELAY * 2)
             );
@@ -1202,7 +1217,11 @@
          */
         setupUrlChangeDetection() {
             // URL 轮询检测
-            setInterval(() => {
+            this._urlPollTimer = setInterval(() => {
+                if (!isContextValid()) {
+                    this.destroy();
+                    return;
+                }
                 if (window.location.href !== this._lastUrl) {
                     this._lastUrl = window.location.href;
                     this.onNavigationChange();
@@ -1210,9 +1229,10 @@
             }, 500);
 
             // popstate 事件监听
-            window.addEventListener('popstate', () => {
+            this._popstateHandler = () => {
                 this.onNavigationChange();
-            });
+            };
+            window.addEventListener('popstate', this._popstateHandler);
         }
 
         /**
@@ -1236,6 +1256,13 @@
             if (this._scrollContainer && this.scrollHandler) {
                 this._scrollContainer.removeEventListener('scroll', this.scrollHandler);
             }
+            if (this._urlPollTimer) {
+                clearInterval(this._urlPollTimer);
+            }
+            if (this._popstateHandler) {
+                window.removeEventListener('popstate', this._popstateHandler);
+            }
+            console.log('Navigator for Gemini: 扩展上下文已失效，已清理旧实例');
         }
     }
 
